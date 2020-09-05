@@ -1,0 +1,82 @@
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>Markdown Editor</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="shortcut icon" href="img/favicon.ico" />
+</head>
+<body>
+	<header>
+		<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-eye-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg" id="view-md" onclick="markIt()">
+		  <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+		  <path fill-rule="evenodd" d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+		</svg>
+		<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-file-earmark-plus-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg" onclick="clearTextarea()">
+			<path fill-rule="evenodd" d="M2 2a2 2 0 0 1 2-2h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm7.5 1.5v-2l3 3h-2a1 1 0 0 1-1-1zM8.5 7a.5.5 0 0 0-1 0v1.5H6a.5.5 0 0 0 0 1h1.5V11a.5.5 0 0 0 1 0V9.5H10a.5.5 0 0 0 0-1H8.5V7z"/>
+		</svg>
+
+		<label for="fontSize">Font</label>
+		<select name="fontSize" id="fontSize">
+			<option value="14px">14px</option>
+			<option value="16px">16px</option>
+			<option value="20px">20px</option>
+			<option value="24px">24px</option>
+			<option value="26px">26px</option>
+			<option value="28px">28px</option>
+			<option value="36px">36px</option>
+		</select>
+	</header>
+	<div id="container">
+		<textarea id="content" class="visible view-area"></textarea>
+		<div id="result" class="hidden view-area"></div>
+	</div>
+
+
+	<script src="./node_modules/marked/marked.min.js"></script>
+	<script type="text/javascript"  src="./node_modules/sanitize-html/dist/sanitize-html.js"></script>
+	<script>
+		const viewBtn = document.getElementById("view-md");
+		const content = document.getElementById('content');
+		const result = document.getElementById('result');
+		const fontSize = document.getElementById("fontSize");
+		fontSize.addEventListener("change", changeFontSize)
+		const reset = () => {
+			if(content.classList.contains("hidden")) {
+				togglePreview()
+			}
+		}
+
+		function togglePreview() {
+			content.classList.toggle("visible");
+			content.classList.toggle("hidden");
+			result.classList.toggle("visible");
+			result.classList.toggle("hidden");
+		}
+
+		function changeFontSize() {
+			content.style.fontSize = `${fontSize.value}`
+			result.style.fontSize = `${fontSize.value}`;
+		}
+
+		function markIt() {
+			result.innerHTML = marked(sanitizeHtml(content.value));
+			togglePreview();
+			if(content.classList.contains("hidden"))
+				viewBtn.classList.add("viz-actv")
+			else
+				viewBtn.classList.remove("viz-actv")
+		}
+
+		function clearTextarea() {
+			if(content.value == "")
+				return
+			const confirmReset = confirm("Are you sure you want to reset the written content?");
+			if(confirmReset) {
+				content.value = "# Empty\nYou can write _**anything**_ you want in this area !";
+				result.innerHTML = "";
+				reset();
+			}
+		}
+	</script>
+</body>
+</html>
